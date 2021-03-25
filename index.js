@@ -60,6 +60,13 @@ console.log(file)
                 res.send(documents)
             })
     })
+    // query user
+    app.get('/allusers', (req, res) => {
+        addNewUser.find({})
+            .toArray((err, documents) => {
+                res.send(documents)
+            })
+    })
     // query bookmark
     app.get('/bookmarkinfo', (req, res) => {
         addBookmark.find({})
