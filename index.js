@@ -1,16 +1,16 @@
 const express = require('express')
 const app = express()
-const port = 3002
+const port = 5000
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
-const fileUpload = require('express-fileupload');
+// const fileUpload = require('express-fileupload');
 require('dotenv').config()
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(fileUpload());
+// app.use(fileUpload());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.u5omi.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -35,35 +35,50 @@ client.connect(err => {
                 res.send(result.insertedCount > 0);
             })
         }
-        else{
-            console.log(req.body)
-            const imgFile = req.files.file;
-            const fname = req.body.fname
-            const lname = req.body.lname
-            const email = req.body.email
-            const id = req.body.id
-            const password = req.body.password
-            const addImg = imgFile.data;
-            const encImage = addImg.toString('base64');
-            // console.log(req.files)
-            // console.log(req.body)
-            var photo = {
-                contentType: imgFile.mimetype,
-                size: imgFile.size,
-                image: Buffer.from(encImage, 'base64')
-            };
-            let userInf = {
-            name : fname + ' ' + lname, 
-            email : email, 
-            password : password, 
-            photo: photo, 
-            id : id}
+        else if (req.body.type == 'withmail'){
+            let fname = req.body.fname
+            let lname = req.body.lname
+            let email = req.body.email
+            let id = req.body.id
+            let password = req.body.password
+
+            if(req.body.nofile){
+                let userInfo = {
+                    name : fname + ' ' + lname, 
+                    email : email, 
+                    password : password, 
+                    id : id}
+                    
+                    addNewUser.insertOne(userInfo)
+                        .then(result => {
+                            res.send(result.insertedCount > 0);
+                            console.log('user added successfully with email without photo')
+                        }) 
+
+                
+            }else{
+                const imgFile = req.files.file;
+                const addImg = imgFile.data;
+                const encImage = addImg.toString('base64');
+                var photo = {
+                    contentType: imgFile.mimetype,
+                    size: imgFile.size,
+                    image: Buffer.from(encImage, 'base64')
+                };
+                let userInf = {
+                name : fname + ' ' + lname, 
+                email : email, 
+                password : password, 
+                photo: photo, 
+                id : id}
+                
+                addNewUser.insertOne(userInf)
+                    .then(result => {
+                        res.send(result.insertedCount > 0);
+                        console.log('user added successfully with email with photo')
+                    }) 
+            }
             
-            addNewUser.insertOne(userInf)
-                .then(result => {
-                    res.send(result.insertedCount > 0);
-                    console.log('user added successfully with email')
-                })
         }
         
     })
