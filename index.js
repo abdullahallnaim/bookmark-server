@@ -5,13 +5,16 @@ const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
-// const fileUpload = require('express-fileupload');
+const fileUpload = require('express-fileupload');
 require('dotenv').config()
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(fileUpload());
-
+app.use(fileUpload());
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.u5omi.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
@@ -28,7 +31,8 @@ client.connect(err => {
 
 
     // add newuser
-    app.post("/users", (req, res) => {
+    app.post("/users",(req, res) => {
+        console.log(req.body.nofile == true)
         if(req.body.type == 'gf'){
             addNewUser.insertOne(req.body)
             .then(result => {
@@ -70,7 +74,8 @@ client.connect(err => {
                 email : email, 
                 password : password, 
                 photo: photo, 
-                id : id}
+                id : id
+            }
                 
                 addNewUser.insertOne(userInf)
                     .then(result => {
@@ -83,7 +88,7 @@ client.connect(err => {
         
     })
     app.put("/user", (req, res) => {
-        console.log(req.body)
+        
         if (req.body.type == 'edit') {
             if (req.body.name) {
                 console.log('only name')
