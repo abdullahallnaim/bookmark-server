@@ -4,6 +4,7 @@ const port = 5000
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const ObjectId = require('mongodb').ObjectId;
 // const fileUpload = require('express-fileupload');
 require('dotenv').config()
 app.use(bodyParser.json());
@@ -111,13 +112,6 @@ client.connect(err => {
         }
 
     })
-    // app.post("/users", (req, res) => {
-    //     addNewUser.updateOne({id : req.body.id}, {$set : {name : req.body.name, email : req.body.email, password : req.body.password}}, (err, result) => {
-    //         console.log(err)
-    //         console.log(result)
-    //                     })
-    // })
-    // add bookmark
     app.post("/bookmark", (req, res) => {
         const bookmark = req.body;
         addBookmark.insertOne(bookmark)
@@ -149,6 +143,14 @@ client.connect(err => {
                 res.send(documents)
             })
     })
+    app.get('/bookmarksinfo', (req, res) => {
+        console.log(req.query.category)
+        console.log(req.query.sitename)
+        addBookmark.find({category: req.query.category, sitename: req.query.sitename})
+            .toArray((err, documents) => {
+                res.send(documents)
+            })
+    })
     // get orderinfo
     app.get('/customersorderinfo', (req, res) => {
         addNewUser.find({})
@@ -156,29 +158,17 @@ client.connect(err => {
                 res.send(documents)
             })
     })
-    // get review
-    // app.get('/getreviewdata', (req, res) => {
-    //     userReview.find({ title: req.query.title })
-    //         .toArray((err, documents) => {
-    //             res.send(documents)
-    //         })
-    // })
-    // // get loggedin user review data
-    // app.get('/getrateddata', (req, res) => {
-    //     userReview.find({ username: req.query.username })
-    //         .toArray((err, documents) => {
-    //             res.send(documents)
-    //         })
-    // })
-    // // get favoritelist
-    // app.get('/getfavlist', (req, res) => {
-    //     addToFavourites.find({ username: req.query.username })
-    //         .toArray((err, documents) => {
-    //             res.send(documents)
-    //         })
-    // })
-
-
+    app.delete('/deletebookmark', (req, res) => {
+        console.log(req.query.category)
+        console.log(req.query.sitename)
+        addBookmark.deleteOne({category: req.query.category, sitename: req.query.sitename}, (err) => {
+            if(err){
+                console.log('not deleted')
+            }else{
+                console.log('deleted')
+            }
+        })
+    })
 });
 
 app.listen(process.env.PORT || port)
