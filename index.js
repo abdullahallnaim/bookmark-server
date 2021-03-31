@@ -176,6 +176,7 @@ client.connect(err => {
     app.get('/usersdata', (req, res) => {
         addNewUser.find({})
             .toArray((err, documents) => {
+                console.log(documents)
                 res.send(documents)
             })
 
