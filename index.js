@@ -172,8 +172,8 @@ client.connect(err => {
             })
 
     })
-    // query user
-    app.get('/usersdata', (req, res) => {
+    
+    app.get('/data', (req, res) => {
         addNewUser.find({})
             .toArray((err, documents) => {
                 console.log(documents)
