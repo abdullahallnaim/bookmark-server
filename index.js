@@ -173,7 +173,7 @@ client.connect(err => {
 
     })
     // query user
-    app.get('/allusers', (req, res) => {
+    app.get('/usersdata', (req, res) => {
         addNewUser.find({})
             .toArray((err, documents) => {
                 res.send(documents)
