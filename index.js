@@ -16,7 +16,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     // root
     app.get('/', (req, res) => {
-        res.send('Hello World!')
+        res.json('Hello World!')
     })
     console.log('db connection success')
     const addNewUser = client.db("bookmark").collection("users");
@@ -172,7 +172,7 @@ client.connect(err => {
             })
 
     })
-    
+
     app.get('/data', (req, res) => {
         addNewUser.find({})
             .toArray((err, documents) => {
