@@ -142,7 +142,7 @@ client.connect(err => {
                 console.log(addCat)
                 addBookmark.insertMany(addCat)
                     .then(result => {
-                        // res.send(result.insertedCount > 0);
+                        res.send(result.insertedCount > 0);
                     })
 
             }
