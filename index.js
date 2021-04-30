@@ -11,12 +11,12 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(fileUpload());
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.u5omi.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://naim:naim007@cluster0.u5omi.mongodb.net/bookmark?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     // root
     app.get('/', (req, res) => {
-        res.json('Hello World!')
+        res.send('Hello World!')
     })
     console.log('db connection success')
     const addNewUser = client.db("bookmark").collection("users");
@@ -154,7 +154,6 @@ client.connect(err => {
         }
     })
     app.put('/editcategory', (req, res) => {
-        console.log(req.body)
         addBookmark.updateMany({ email: req.body.email, category: req.body.oldcat, sitename: req.body.oldname }, { $set: { category: req.body.newcategory, sitename: req.body.sitename, sitelink: req.body.sitelink } }, (err, result) => {
             if (err) {
                 console.log('failed')
@@ -172,7 +171,7 @@ client.connect(err => {
             })
 
     })
-
+    
     app.get('/data', (req, res) => {
         addNewUser.find({})
             .toArray((err, documents) => {
@@ -189,16 +188,12 @@ client.connect(err => {
             })
     })
     app.get('/bookmarksinfo', (req, res) => {
-        console.log(req.query.category)
-        console.log(req.query.sitename)
         addBookmark.find({ category: req.query.category, sitename: req.query.sitename })
             .toArray((err, documents) => {
                 res.send(documents)
             })
     })
     app.delete('/deletebookmark', (req, res) => {
-        console.log(req.query.category)
-        console.log(req.query.sitename)
         addBookmark.deleteOne({ email: req.query.email, category: req.query.category, sitename: req.query.sitename }, (err) => {
             if (err) {
                 console.log('not deleted')
