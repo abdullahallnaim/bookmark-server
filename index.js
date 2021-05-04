@@ -16,7 +16,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     // root
     app.get('/', (req, res) => {
-        res.send('Hello World!')
+        res.send('server is running ...')
     })
     console.log('db connection success')
     const addNewUser = client.db("bookmark").collection("users");
